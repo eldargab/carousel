@@ -1,11 +1,15 @@
 
-build: components index.js carousel.css
+build: components
 	@component build --dev
 
-components:
+components: component.json
 	@component install --dev
 
 clean:
-	rm -fr build components template.js
+	@rm -fr build components template.js
 
-.PHONY: clean
+test: build
+	@open examples/index.html
+
+
+.PHONY: build clean test

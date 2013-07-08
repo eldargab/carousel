@@ -1,74 +1,58 @@
-var classes = require('classes');
+var dom = require('dom')
 
-module.exports = Carousel;
+module.exports = Carousel
 
-function isCarouselItem(elem) {
-  return elem && elem.nodeName === 'DIV';
+function Carousel(el) {
+  if (!(this instanceof Carousel)) return new Carousel(el)
+  this.el = el
+  dom.addClass('carousel', this.el)
+  this.show('next', dom.firstChild(this.el))
 }
 
-function nextSibling(item) {
-  do {
-    item = item.nextSibling;
-  } while (item && !isCarouselItem(item));
+Carousel.prototype.show = function(effect, el) {
+  var curr = this.current()
+    , next = effect
+    , prev = effect == 'next' ? 'prev' : 'next'
 
-  return item;
-}
+  if (curr == el) return
 
-function prevSibling(item) {
-  do {
-    item = item.previousSibling;
-  } while (item && !isCarouselItem(item))
-
-  return item;
-}
-
-function Carousel(el, opts) {
-  if (!(this instanceof Carousel)) return new Carousel(el, opts);
-  opts = opts || {};
-  this.el = el;
-  classes(el).add('carousel');
-
-  this._show(this.el.querySelector('.carousel > div'));
-}
-
-Carousel.prototype.forEach = function (cb) {
-  var item = this.el.querySelector('div');
-  while (item) {
-    cb(item);
-    item = nextSibling(item);
+  removeClasses(el)
+  dom.addClass('carousel-notransition', el)
+  dom.addClass(next, el)
+  el.clientWidth // trigger reflow
+  dom.removeClass('carousel-notransition', el)
+  if (curr) {
+    dom.addClass(prev, curr)
+    dom.removeClass('visible', curr)
   }
+  dom.addClass('visible', el)
+  dom.removeClass(next, el)
 }
 
-Carousel.prototype.next = function () {
-  var current = this.el.querySelector('.carousel-visible');
-  var next = nextSibling(current);
-  this._show(next);
-
-  return next;
+function removeClasses(el) {
+  dom.removeClass('next', el)
+  dom.removeClass('prev', el)
+  dom.removeClass('visible', el)
 }
 
-Carousel.prototype.prev = function () {
-  var current = this.el.querySelector('.carousel-visible');
-  var prev = prevSibling(current);
-  this._show(prev);
-
-  return prev;
+Carousel.prototype.current = function() {
+  var els = this.el.children
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i]
+    if (el.nodeType != 1) continue // IE < 9
+    if (dom.hasClass('visible', el)) return el
+  }
+  return null
 }
 
-Carousel.prototype._show = function (item) {
-  if (!item) return;
-  var next = nextSibling(item);
-  var prev = prevSibling(item);
-
-  this.forEach(function (ci) {
-    classes(ci)
-      .remove('carousel-next')
-      .remove('carousel-prev')
-      .remove('carousel-visible');
-  });
-
-  if (next) classes(next).add('carousel-next');
-  if (prev) classes(prev).add('carousel-prev');
-  classes(item).add('carousel-visible');
+Carousel.prototype.next = function() {
+  var curr = this.current()
+  var next = curr && dom.next(curr)
+  if (next) this.show('next', next)
 }
 
+Carousel.prototype.prev = function() {
+  var curr = this.current()
+  var prev = curr && dom.prev(curr)
+  if (prev) this.show('prev', prev)
+}

@@ -1,19 +1,8 @@
 <html>
   <head>
+    <title>Carousel</title>
     <link href="../build/build.css" rel="stylesheet" type="text/css" />
     <script src="../build/build.js" type="text/javascript"></script>
-    <script type="text/javascript">
-      var carousel = require('carousel');
-      var c;
-      window.addEventListener('load', function (e) {
-        c = carousel(document.getElementById('carousel'));
-      });
-
-      window.onkeyup = function (e) {
-        if (e.which === 39) c.next();
-        else if (e.which === 37) c.prev();
-      }
-    </script>
     <style>
       body {
         padding: 0;
@@ -21,8 +10,16 @@
       }
 
       #carousel {
+        margin: auto;
         height: 100%;
-        width: 100%;
+        width: 300px;
+      }
+
+      .slide > * {
+        transition: .4s all ease;
+        -webkit-transition: .4s all ease;
+        -moz-transition: .4s all ease;
+        -o-transition: .4s all ease;
       }
     </style>
   </head>
@@ -39,4 +36,15 @@
       </div>
     </div>
   </body>
+  <script type="text/javascript">
+    var carousel = require('carousel');
+    var c = carousel(document.getElementById('carousel'));
+    window.onkeyup = function (e) {
+      if (e.which === 39) c.next();
+      else if (e.which === 37) c.prev();
+    }
+    setTimeout(function() {
+      c.el.classList.add('slide')
+    })
+  </script>
 </html>

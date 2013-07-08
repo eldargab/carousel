@@ -1,13 +1,14 @@
 {
   "name": "carousel",
-  "repo": "tomerdmnt/carousel",
   "description": "Simple carousel component",
   "version": "0.0.1",
-  "keywords": [ "ui", "carousel" ],
+  "keywords": [
+    "ui",
+    "carousel"
+  ],
   "dependencies": {
-    "component/classes": "*"
+    "eldargab/dom": "*"
   },
-  "development": {},
   "scripts": [
     "index.js"
   ],
